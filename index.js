@@ -36,6 +36,8 @@ function invoke (mac, func, callback) {
         } else {
             callbackWrapper();
         }
+    } else {
+        callbackWrapper();
     }
 }
 
