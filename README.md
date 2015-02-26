@@ -85,4 +85,69 @@ mac.series(
   }
 );
 ```
+
+### Build Example
+
+The following is what an ES6 and Less project build might look like. It breaks each part down into separate functions that can be run individually, or batched using the main `dist` module. I chose not to require all the dependencies to reduce cruft, so just assume they're there.
+
+```js
+// tasks/dist/babelify.js
+
+module.exports = function () {
+  return gulp.src('src/*.js')
+    .pipe(gulpBabelify)
+    .pipe(gulp.dest('dist'));
+};
+
+// tasks/dist/uglify.js
+
+module.exports = function () {
+  return gulp.src('dist/*.js')
+    .pipe(gulpUglify)
+    .pipe(gulp.dest('dist'));
+};
+
+// tasks/dist/js.js
+
+module.exports = function () {
+  return mac.series(
+    require('./babelify'),
+    require('./uglify')
+  );
+};
+
+// tasks/dist/less.js
+
+module.exports = function () {
+  return gulp.src('src/*.less')
+    .pipe(gulpLess)
+    .pipe(gulp.dist('dist'));
+};
+
+// tasks/dist/cssmin.js
+
+module.exports = function () {
+  return gulp.src('dist/*.css')
+    .pipe(gulpCssmin)
+    .pipe(gulp.dist('dist'));
+};
+
+// tasks/dist/css.js
+
+module.exports = function () {
+  return mac.series(
+    require('./less'),
+    require('./cssmin')
+  );
+};
+
+// tasks/dist.js
+
+module.exports = function () {
+  return mac.parallel(
+    require('./dist/css'),
+    require('./dist/js')
+  );
+}
+
 ```
