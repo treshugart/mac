@@ -9,6 +9,7 @@ function args (arg) {
 function invoke (mac, func, callback) {
     var called = false;
     var isFunc = typeof func === 'function';
+    var hasArgs = isFunc && hasArgsRegex.test(func.toString());
     var result;
 
     function callbackWrapper (err) {
@@ -19,7 +20,7 @@ function invoke (mac, func, callback) {
     }
 
     if (isFunc) {
-        if (hasArgsRegex.test(func.toString())) {
+        if (hasArgs) {
             func(callbackWrapper);
         } else {
             result = func();
@@ -36,7 +37,7 @@ function invoke (mac, func, callback) {
         } else {
             callbackWrapper();
         }
-    } else {
+    } else if (!hasArgs) {
         callbackWrapper();
     }
 }
@@ -44,7 +45,7 @@ function invoke (mac, func, callback) {
 function Mac (opts) {
     this.opts = opts || {};
     this.opts = {
-        on: this.opts.on || 'finish'
+        on: this.opts.on || 'end'
     };
 }
 
@@ -79,10 +80,6 @@ Mac.prototype = {
         var total = funcs.length;
 
         return new Promise(function (resolve) {
-            if (!total) {
-                return resolve(that);
-            }
-
             function next () {
                 invoke(that, funcs[index], function () {
                     ++index;
