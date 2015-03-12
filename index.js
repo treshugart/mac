@@ -9,10 +9,10 @@ function args (arg) {
 function invoke (mac, func, callback) {
     var called = false;
     var isFunc = typeof func === 'function';
-    var hasArgs = isFunc && hasArgsRegex.test(func.toString());
+    var isFuncHasArgs = isFunc && hasArgsRegex.test(func.toString());
     var result;
 
-    function callbackWrapper (err) {
+    function callbackWrapper () {
         if (!called) {
             called = true;
             callback();
@@ -20,7 +20,7 @@ function invoke (mac, func, callback) {
     }
 
     if (isFunc) {
-        if (hasArgs) {
+        if (isFuncHasArgs) {
             func(callbackWrapper);
         } else {
             result = func();
@@ -31,13 +31,17 @@ function invoke (mac, func, callback) {
 
     if (result) {
         if (result.on) {
-            result.on(mac.opts.on, callbackWrapper);
+            mac.opts.on.split(' ').forEach(function (evt) {
+                result.on(evt, callbackWrapper);
+            });
         } else if (result.then) {
             result.then(callbackWrapper, callbackWrapper);
         } else {
             callbackWrapper();
         }
-    } else if (!hasArgs) {
+    }
+
+    if (!result && !isFuncHasArgs) {
         callbackWrapper();
     }
 }
