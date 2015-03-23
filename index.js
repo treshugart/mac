@@ -60,9 +60,9 @@ Mac.prototype = {
         var that = this;
         var total = funcs.length;
 
-        return new Promise(function (resolve) {
+        return function (done) {
             if (!total) {
-                return resolve(that);
+                return done();
             }
 
             funcs.forEach(function (func) {
@@ -70,11 +70,11 @@ Mac.prototype = {
                     ++index;
 
                     if (index === total) {
-                        resolve(that);
+                        done();
                     }
                 });
             });
-        });
+        };
     },
 
     series: function () {
@@ -83,13 +83,13 @@ Mac.prototype = {
         var that = this;
         var total = funcs.length;
 
-        return new Promise(function (resolve) {
+        return function (done) {
             function next () {
                 invoke(that, funcs[index], function () {
                     ++index;
 
                     if (index === total) {
-                        resolve(that);
+                        done();
                     } else {
                         next();
                     }
@@ -97,11 +97,11 @@ Mac.prototype = {
             }
 
             if (!total) {
-                return resolve(that);
+                return done();
             }
 
             next();
-        });
+        };
     }
 };
 
