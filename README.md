@@ -18,7 +18,7 @@ var mac = require('mac');
 
 ## Usage
 
-Mac is designed to work with any combination of streams, promises or functions that define a single argument and will ensrue that they are called in parallel or series. Since Mac returns promises, you can pass it into itself.
+Mac is designed to work with any combination of streams, promises or functions that define a single argument and will ensure that they are called in parallel or series. Since Mac returns a function that defines a callback, you can pass it into itself. The function that is returned when called begins executing the Mac chain.
 
 ### Streams
 
@@ -62,12 +62,12 @@ If you wanted to execute a series of functions ensuring one finishes before the 
 ```js
 mac.series(
   function (done) {
-	setTimeout(done, 100);
+    setTimeout(done, 100);
   },
 
   function (done) {
-	updateSomething();
-	done();
+	  updateSomething();
+	  done();
   }
 );
 ```
@@ -77,11 +77,11 @@ If your task doesn't need to report back, then you don't have to define a callba
 ```js
 mac.series(
   function (done) {
-	setTimeout(done, 100);
+	  setTimeout(done, 100);
   },
 
   function () {
-	updateSomething();
+	  updateSomething();
   }
 );
 ```
@@ -134,20 +134,16 @@ module.exports = function () {
 
 // tasks/dist/css.js
 
-module.exports = function () {
-  return mac.series(
-    require('./less'),
-    require('./cssmin')
-  );
-};
+module.exports = mac.series(
+  require('./less'),
+  require('./cssmin')
+);
 
 // tasks/dist.js
 
-module.exports = function () {
-  return mac.parallel(
-    require('./dist/css'),
-    require('./dist/js')
-  );
-}
+module.exports = mac.parallel(
+  require('./dist/css'),
+  require('./dist/js')
+);
 
 ```
