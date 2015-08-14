@@ -49,7 +49,7 @@ function invoke (mac, func, callback) {
 function Mac (opts) {
     this.opts = opts || {};
     this.opts = {
-        on: this.opts.on || 'end'
+        on: this.opts.on || 'end continue'
     };
 }
 
