@@ -4,6 +4,10 @@
 
 A tiny library designed to parallel or series chain streams, promises or functions with callbacks.
 
+## DEPRECATED
+
+Gulp 4.0 is implementing pretty much the same exact API.
+
 ## Installing
 
 ```
